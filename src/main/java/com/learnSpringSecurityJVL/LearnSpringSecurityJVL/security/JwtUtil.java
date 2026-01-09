@@ -23,7 +23,7 @@ public class JwtUtil {
                 .builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + MINUTE))
+                .expiration(new Date(System.currentTimeMillis() + MINUTE * 5)) // 5 minutes
                  .signWith(SECRET_KEY, Jwts.SIG.HS256)
                  .compact();
     }

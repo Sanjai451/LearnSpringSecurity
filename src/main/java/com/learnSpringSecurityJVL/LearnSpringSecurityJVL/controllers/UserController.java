@@ -4,6 +4,7 @@ import com.learnSpringSecurityJVL.LearnSpringSecurityJVL.model.User;
 import com.learnSpringSecurityJVL.LearnSpringSecurityJVL.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,17 +25,24 @@ public class UserController {
     @PostMapping
     public User createUser(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if(user.getRole() == null){
+            user.setRole("USER");
+        }else{
+            user.setRole(user.getRole().toUpperCase());
+        }
         return userRepository.save(user);
     }
 
     // READ ALL
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     // READ BY ID
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userRepository.findById(id)
                 .map(ResponseEntity::ok)
@@ -43,6 +51,7 @@ public class UserController {
 
     // UPDATE
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<User> updateUser(
             @PathVariable Long id,
             @RequestBody User updatedUser) {
