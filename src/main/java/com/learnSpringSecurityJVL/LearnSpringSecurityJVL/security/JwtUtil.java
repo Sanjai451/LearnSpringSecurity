@@ -1,6 +1,7 @@
 package com.learnSpringSecurityJVL.LearnSpringSecurityJVL.security;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ public class JwtUtil {
     private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
     // generate JWT token
     public String generateToken(UserDetails userDetails){
+
         final int HOUR = 1000 * 60 * 60;
         final int MINUTE = 1000 * 60;
          return Jwts
@@ -29,11 +31,17 @@ public class JwtUtil {
 
     // validation
     public boolean validateToken(String token, UserDetails userDetails){
-        String un = extractUserName(token);
+        try{
+            String un = extractUserName(token);
         /*
         Now checking both username are same
          */
-        return un.equals(userDetails.getUsername());
+            return un.equals(userDetails.getUsername());
+        }
+        catch (Exception e){
+            System.out.println("Failed while Validating " + e);
+            return false;
+        }
     }
 
     /*

@@ -16,6 +16,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/*
+Reason for extending OncePerRequestFilter
+👉 To guarantee that your JWT filter runs exactly ONCE per HTTP request
+If we extend normal Filter then the code may get executed multiple times
+It is an industry standard to use OncePerRequestFilter
+ */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -36,12 +42,12 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         String token = authHeader.substring(7); // getting only token
 
-        System.out.println(token);
+        System.out.println("JWT Token : " + token);
 
         try{
             String userName = jwtUtil.extractUserName(token);
 
-            System.out.println(userName);
+            System.out.println("User Name extracted from token : " + userName);
 
 
 //            if username is not already authenticated return null - SecurityContextHolder.getContext().getAuthentication()
@@ -54,7 +60,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
                     UsernamePasswordAuthenticationToken authenticationToken =
-                            new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails.getUsername(),
+                                    userDetails.getPassword(),
+                                    userDetails.getAuthorities()
+                            );
 
                     // store client data
                     authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

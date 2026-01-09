@@ -35,6 +35,7 @@ public class AuthController {
 
             // get principle return the user data after checking with the database using DaoAuthProvider
             UserDetails userDetails = (UserDetails)authentication.getPrincipal(); // get user details of authenticated user
+
             String token = jwtUtil.generateToken(userDetails);
 
             return ResponseEntity.ok(Map.of("token", token));

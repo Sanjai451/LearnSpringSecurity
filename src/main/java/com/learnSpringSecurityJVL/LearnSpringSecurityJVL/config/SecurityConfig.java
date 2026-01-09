@@ -81,7 +81,6 @@ public class SecurityConfig {
 //    From databases
     @Bean
     public UserDetailsService userDetailService(){
-
         return new CustomUserDetailsService();
     }
 
